@@ -137,6 +137,13 @@ const BIOS = [
   "Did a TED talk. It was a TEDx. In a library. Four people came.",
   "Negotiated their salary in Dogecoin once. Once.",
   "Describes themselves as 'pre-success'.",
+  "Believes every problem can be solved with a correctly-structured monorepo. Has never solved a problem with a monorepo.",
+  "Won a hackathon by submitting 'a guy named Carl'. Carl was a cardboard cutout. Legally airtight.",
+  "GitHub bio says 'debugging production since 2007', which would make them eight at the time. Math is hard.",
+  "Once deleted a production database and got promoted for fixing it before anyone noticed. Confidence: +500.",
+  "Spends every standup describing their home lab. It has 30 Raspberry Pis. None are on.",
+  "Most recent commit message: 'idk maybe this works'. It did not. It has never.",
+  "Calls their laptop a 'workstation'. Uses it exclusively for Discord.",
 ];
 
 export function genCandidate() {
@@ -177,6 +184,12 @@ const PROJECT_TEMPLATES = [
   { name: "Hoolie Phone Firmware", desc: "Contract work on a phone that occasionally catches fire. Ship it anyway.", work: 420, payout: 34000, hype: 8 },
   { name: "Seed-Stage Dating App", desc: "Matches founders with co-founders. Everyone lies about their MRR.", work: 170, payout: 11500, hype: 5 },
   { name: "VR Spreadsheets", desc: "Excel, but you wear a headset and feel nauseous. Enterprise loves it.", work: 340, payout: 26000, hype: 7 },
+  { name: "MeetingOS", desc: "An operating system made entirely of recurring 1-on-1s. You can't close a window without booking three more.", work: 240, payout: 16500, hype: 6 },
+  { name: "Standup Replacement Bot", desc: "An AI that generates standup updates so engineers don't have to. Incoherent, yet somehow more honest.", work: 130, payout: 8800, hype: 3 },
+  { name: "Imposter Syndrome Dashboard", desc: "Real-time metrics on how much you deserve your job. The number only goes down. That's accurate.", work: 150, payout: 10000, hype: 4 },
+  { name: "Resume Embellishment Suite", desc: "SaaS that makes work history 5x more impactful. 'Led' instead of 'attended'. 'Architected' instead of 'googled'.", work: 95, payout: 6500, hype: 2 },
+  { name: "Slack Status Sentiment API", desc: "Analyzes status messages to predict team morale. Current reading: 'on the edge of something'.", work: 140, payout: 9500, hype: 3 },
+  { name: "Coffee Pairing Engine", desc: "ML that pairs your mood with the perfect coffee. 97% accuracy. Usually suggests 'espresso, but more'.", work: 210, payout: 14500, hype: 5 },
 ];
 
 export function genProject() {
@@ -218,6 +231,14 @@ export const AMBIENT_LINES = [
   "Someone deployed on a Friday. Candles have been lit.",
   "{name} is arguing with a linter. The linter is winning.",
   "The 'quick sync' has produced four action items and zero actions.",
+  "{name} attended a conference about not attending conferences. It cost $1,200.",
+  "Someone set their Slack title to 'Chief Vibes Officer'. Legal is looking into it.",
+  "{name} has been 'refactoring' the same three files for six weeks. Nobody dares ask.",
+  "TechCrunch published a piece about 'a company very similar to yours'. It's your company. They didn't ask.",
+  "{name} opened 23 GitHub issues titled 'investigate'. Closed: zero.",
+  "Someone sent the investors an internal Slack message by accident. It said 'aaaaaaaahhh'. The round is still on.",
+  "An auto-reply has fired 47 times: 'out of office until Friday'. That Friday was nine months ago.",
+  "{name} is debugging by vibes. The vibes are bad. The laptop is worse.",
 ];
 
 export const IDLE_LINES = [
@@ -392,7 +413,7 @@ export const EVENTS = [
       {
         label: "Blame the intern 👉",
         effect: (g) => {
-          g.hype -= 5;
+          g.hype = Math.max(0, g.hype - 5);
           g.adjustAll("joy", -10);
           return "You don't have an intern. You blamed one anyway. The team noticed. TechCrunch noticed. The fictional intern has a support hashtag now.";
         },
@@ -464,7 +485,7 @@ export const EVENTS = [
       {
         label: "Refuse to pivot 🧱",
         effect: (g) => {
-          g.hype -= 3;
+          g.hype = Math.max(0, g.hype - 3);
           g.adjustAll("sanity", 8);
           return "The advisor called you 'un-coachable' and sent a 9-paragraph email with a TED talk attached. The team respects you more.";
         },
@@ -549,9 +570,123 @@ EVENTS.push(
       {
         label: "Archive the repo 🪦",
         effect: (g) => {
-          g.hype -= 3;
+          g.hype = Math.max(0, g.hype - 3);
           g.adjustAll("joy", -6);
           return "Archived. A fork named 'YourLib-but-good' appeared within the hour. It's already more popular.";
+        },
+      },
+    ],
+  }
+);
+
+EVENTS.push(
+  {
+    title: "The Certification Arc",
+    cond: (g) => g.staff.some((s) => s.role.key === "dev"),
+    desc: "An engineer has decided the path to enlightenment is collecting cloud certifications. They have 47 tabs of study material open and have stopped shipping code entirely.",
+    choices: [
+      {
+        label: "Support their growth 📚 ($1,200)",
+        effect: (g) => {
+          g.cash -= 1200;
+          g.adjustAll("joy", 8);
+          return "You paid for the exam. They failed it. The confidence-to-competence gap is now 50% wider, and they're calling that 'learning velocity'.";
+        },
+      },
+      {
+        label: "\"Please ship something\" 🚢",
+        effect: (g) => {
+          g.adjustAll("sanity", -8);
+          return "They closed the tabs. Resentfully. The productivity is real but the vibes are crunchy.";
+        },
+      },
+    ],
+  },
+  {
+    title: "The Burnout Speedrun",
+    cond: (g) => g.staff.length >= 2,
+    desc: "Your most productive engineer has optimized down to 3 hours of sleep and an all-ramen diet. They're moving fast and breaking things. Mostly themselves.",
+    choices: [
+      {
+        label: "Celebrate the hustle 🏃",
+        effect: (g) => {
+          if (g.active[0]) g.active[0].progress *= 1.15;
+          g.staff.forEach((s) => { if (s.role.key !== "tenx") s.needs.sanity -= 12; });
+          return "Projects ship faster. Three engineers quietly update LinkedIn. The ramen one collapsed during standup. 'I'm fine,' they wheezed, horizontally.";
+        },
+      },
+      {
+        label: "Enforce actual sleep 🛌",
+        effect: (g) => {
+          g.adjustAll("sanity", 12);
+          g.adjustAll("joy", 5);
+          return "They're furious but alive. Velocity dipped, retention soared. You made a sustainable long-term decision and it feels deeply unnatural.";
+        },
+      },
+    ],
+  },
+  {
+    title: "The Framework Upgrade Spiral",
+    cond: (g) => g.active.length > 0,
+    desc: "A new framework version dropped at 2 AM. An engineer has declared the upgrade 'critical'. It is not critical. It will never be critical.",
+    choices: [
+      {
+        label: "Let them upgrade 🎢",
+        effect: (g) => {
+          if (g.active[0]) { g.active[0].bugs += 2; g.active[0].work += 24; }
+          g.adjustAll("joy", -8);
+          return "Two weeks of merge conflicts. Breaking changes everywhere. The upgrade is 85% done. It will always be 85% done.";
+        },
+      },
+      {
+        label: "Freeze the version 🧊",
+        effect: (g) => {
+          g.adjustAll("joy", -12);
+          return "They say you're 'not serious about engineering excellence'. Meanwhile, your product works, and the dream upgrade will still exist next year. It always does.";
+        },
+      },
+    ],
+  },
+  {
+    title: "The Naming Bikeshed",
+    cond: (g) => g.staff.length >= 3,
+    desc: "The team got stuck naming a feature. Six hours, 47 Slack messages, one spreadsheet with weighted scoring, and a schism that's starting to look theological.",
+    choices: [
+      {
+        label: "Executive decision 👑",
+        effect: (g) => {
+          g.adjustAll("joy", -10);
+          return "You picked a name. Half the team says 'that's bad actually'. It ships with a name nobody likes. That is how every product you've ever used was named.";
+        },
+      },
+      {
+        label: "Flip a coin 🪙",
+        effect: (g) => {
+          g.adjustAll("joy", 6);
+          return "Chaos selection. Everyone is so relieved it's over that they like the name now. Governance via coin is on the table for the roadmap too.";
+        },
+      },
+    ],
+  },
+  {
+    title: "The Sneaky Deployment",
+    cond: (g) => g.active.length > 0,
+    desc: "An engineer deployed straight to production without telling anyone. It worked. They look more confused than relieved. Everyone else is just confused.",
+    choices: [
+      {
+        label: "Congratulations? 🤨",
+        effect: (g) => {
+          g.adjustAll("joy", 7);
+          g.adjustAll("sanity", -8);
+          return "You praised the bold iteration. They have now concluded that communication is optional. Please enjoy your upcoming meeting about deployment processes.";
+        },
+      },
+      {
+        label: "Serious talk about process ⚖️",
+        effect: (g) => {
+          g.adjustAll("sanity", 4);
+          g.adjustAll("joy", -6);
+          return "The talk was had. Code review is now mandatory. Velocity improved and absolutely nobody is happy about it.";
         },
       },
     ],

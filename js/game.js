@@ -182,16 +182,17 @@ export class Game {
     if (!s) return;
     const severance = s.salary * 3;
     this.cash -= severance;
-    this.removeStaff(s, `🪓 ${s.name} was 'transitioned to an alumni role' (severance: ${fmtMoney(severance)}). The team noticed.`);
+    this.removeStaff(s, `🪓 ${s.name} was 'transitioned to an alumni role' (severance: ${fmtMoney(severance)}). The team noticed.`, false);
     this.adjustAll("joy", -8);
   }
 
-  removeStaff(s, message) {
+  // voluntary=false for firings — those aren't rage-quits and shouldn't count as them
+  removeStaff(s, message, voluntary = true) {
     const idx = this.staff.indexOf(s);
     if (idx === -1) return;
     if (s.desk) s.desk.owner = null;
     this.staff.splice(idx, 1);
-    this.quits++;
+    if (voluntary) this.quits++;
     this.sfx("quit");
     this.ticker(message);
     this.dirty = true;

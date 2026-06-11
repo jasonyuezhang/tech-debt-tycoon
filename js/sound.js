@@ -22,7 +22,12 @@ export class Sound {
       if (!AC) return false;
       this.ctx = new AC();
     }
-    if (this.ctx.state === "suspended") this.ctx.resume();
+    if (this.ctx.state === "suspended") {
+      // resume() is async — report ready optimistically so the notes queue
+      // and play the instant the context wakes, instead of dropping the first sfx
+      this.ctx.resume();
+      return true;
+    }
     return this.ctx.state === "running";
   }
 
