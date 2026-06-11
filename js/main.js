@@ -39,11 +39,19 @@ canvas.addEventListener("mousemove", (e) => {
 
   // tooltip: staff first, then objects
   const staffer = game.staff.find((s) => Math.hypot(s.x - px, s.y - py) < 18);
+  renderer.hoverStaff = staffer || null;
   if (staffer) {
+    const needBars = [["caffeine", "☕"], ["joy", "🎮"], ["sanity", "🧠"]]
+      .map(([k, icon]) => {
+        const v = staffer.needs[k];
+        return `<div class="need-row"><span class="need-icon">${icon}</span>
+          <div class="need-bar"><div class="need-fill ${v < 28 ? "low" : ""}" style="width:${v}%"></div></div></div>`;
+      }).join("");
     ui.showTooltip(
       `<b>${staffer.emoji} ${staffer.name}</b><br>
        <span class="tt-sub">${staffer.role.name} · ${fmtMoney(staffer.salary)}/day</span><br>
-       <span class="tt-bio">"${staffer.bio}"</span>`,
+       <span class="tt-bio">"${staffer.bio}"</span>
+       <div class="tt-needs">${needBars}</div>`,
       e.clientX, e.clientY
     );
     return;
@@ -62,6 +70,7 @@ canvas.addEventListener("mousemove", (e) => {
 
 canvas.addEventListener("mouseleave", () => {
   renderer.hoverTile = null;
+  renderer.hoverStaff = null;
   ui.hideTooltip();
 });
 

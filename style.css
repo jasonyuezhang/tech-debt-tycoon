@@ -167,6 +167,7 @@ body {
 }
 .tt-sub { color: var(--yellow); font-size: 11px; }
 .tt-bio { color: var(--muted); font-style: italic; font-size: 11px; }
+.tt-needs { width: 180px; margin-top: 4px; }
 
 /* ---------- modal ---------- */
 #modal-backdrop {

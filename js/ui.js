@@ -1,7 +1,7 @@
 // ============================================================
 // ui.js — DOM panels, modals, the ticker. All the chrome.
 // ============================================================
-import { OBJECT_TYPES, fmtMoney, pick } from "./data.js";
+import { OBJECT_TYPES, fmtMoney } from "./data.js";
 import { Sound } from "./sound.js";
 
 const $ = (sel) => document.querySelector(sel);
@@ -223,7 +223,7 @@ export class UI {
         ${bar(s.needs.caffeine, "Caffeine", "☕")}
         ${bar(s.needs.joy, "Joy", "🎮")}
         ${bar(s.needs.sanity, "Sanity", "🧠")}
-        <button class="card-btn danger-btn" data-action="fire" data-id="${s.id}">🪓 ${pick(FIRE_QUIPS)} (${fmtMoney(s.salary * 3)} severance)</button>
+        <button class="card-btn danger-btn" data-action="fire" data-id="${s.id}">🪓 ${FIRE_QUIPS[s.id % FIRE_QUIPS.length]} (${fmtMoney(s.salary * 3)} severance)</button>
       </div>`).join("");
     return `<div class="panel-note">${g.staff.length} employees · ${g.quits} have fled. Keep the bars green or learn why severance exists.</div>${cards}`;
   }

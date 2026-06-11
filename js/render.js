@@ -3,12 +3,15 @@
 // ============================================================
 import { TILE, GRID_W, GRID_H, OBJECT_TYPES } from "./data.js";
 
+const LIFT = 7; // how far furniture top faces rise off the floor
+
 export class Renderer {
   constructor(canvas, game) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.game = game;
     this.hoverTile = null; // {x, y} in tile coords
+    this.hoverStaff = null; // staffer under the cursor (set by main.js)
     this.buildType = null; // set by UI when in build mode
     this.sellMode = false;
     canvas.width = GRID_W * TILE;
@@ -64,6 +67,32 @@ export class Renderer {
     ctx.font = "16px serif";
     ctx.fillText("🚪", 14, doorY);
 
+    // hover feedback in normal mode: ring under staff, outline on furniture
+    if (!this.buildType && !this.sellMode) {
+      if (this.hoverStaff && game.staff.includes(this.hoverStaff)) {
+        const s = this.hoverStaff;
+        ctx.strokeStyle = "rgba(255,255,255,0.45)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(s.x, s.y + 12, 13, 6, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (this.hoverTile) {
+        const obj = game.objAt(this.hoverTile.x, this.hoverTile.y);
+        if (obj) {
+          const inset = obj.type === "desk" ? 4 : 3;
+          ctx.strokeStyle = "rgba(255,255,255,0.30)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.roundRect(
+            obj.x * TILE + inset - 2, obj.y * TILE + inset - LIFT - 2,
+            TILE - inset * 2 + 4, TILE - inset * 2 + 4,
+            obj.type === "desk" ? 7 : 11
+          );
+          ctx.stroke();
+        }
+      }
+    }
+
     // entities, y-sorted so lower things draw in front (the 2.5D illusion)
     const entities = [
       ...game.objects.map((o) => ({ kind: "obj", sortY: (o.y + 1) * TILE, o })),
@@ -112,7 +141,6 @@ export class Renderer {
     const { ctx } = this;
     const def = OBJECT_TYPES[o.type];
     const px = o.x * TILE, py = o.y * TILE;
-    const LIFT = 7; // how far the top face rises off the floor
     const inset = o.type === "desk" ? 4 : 3;
     const w = TILE - inset * 2;
     const r = o.type === "desk" ? 6 : 10;
