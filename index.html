@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tech Debt Tycoon — a startup mismanagement simulator</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦄</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header id="topbar">
+    <div id="logo">
+      <span class="logo-main">TECH DEBT TYCOON</span>
+      <span class="logo-sub">disrupting disruption since 10:45 AM</span>
+    </div>
+    <div class="stat" title="Cash. When this hits zero, you become a 'serial entrepreneur'.">💰 <span id="stat-cash">$0</span></div>
+    <div class="stat" title="Hype. Worth more than revenue. Obviously.">🔥 <span id="stat-hype">0</span></div>
+    <div class="stat" title="Valuation. A number everyone agrees to pretend is real.">🦄 <span id="stat-valuation">$0</span></div>
+    <div class="stat" title="Daily burn rate. The kombucha isn't free.">🧾 <span id="stat-burn">$0</span>/day</div>
+    <div class="stat" title="How much of your own company you still own.">🍰 <span id="stat-equity">100</span>%</div>
+    <div class="stat" title="Days since founding. Each one a miracle.">📅 Day <span id="stat-day">1</span></div>
+    <div id="speed-controls">
+      <button data-speed="0" title="Pause (like your roadmap)">⏸</button>
+      <button data-speed="1" class="active" title="Normal speed">▶</button>
+      <button data-speed="3" title="Crunch mode">⏩</button>
+    </div>
+    <button id="btn-raise" title="Beg venture capitalists for money using only buzzwords.">🤑 Raise Round</button>
+    <button id="btn-mute" title="Toggle the artisanal chiptune soundscape.">🔊</button>
+  </header>
+
+  <main id="layout">
+    <div id="canvas-wrap">
+      <canvas id="game-canvas"></canvas>
+      <div id="canvas-hint">Left-click to place · Right-click to cancel</div>
+    </div>
+    <aside id="sidebar">
+      <nav id="tabs">
+        <button data-tab="build" class="active">🛠 Build</button>
+        <button data-tab="hire">🧑‍💼 Hire</button>
+        <button data-tab="projects">📦 Projects</button>
+        <button data-tab="team">👥 Team</button>
+      </nav>
+      <div id="panel"></div>
+    </aside>
+  </main>
+
+  <footer id="ticker">
+    <div class="ticker-label">📰</div>
+    <div id="ticker-log"></div>
+  </footer>
+
+  <div id="toast-container"></div>
+  <div id="tooltip" class="hidden"></div>
+  <div id="modal-backdrop" class="hidden">
+    <div id="modal"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
